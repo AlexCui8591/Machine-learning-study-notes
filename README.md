@@ -8,14 +8,6 @@ When building a neural network from scratch, the process can be divided into sev
 
 1. **Define Activation Functions**  
    Implement common activation functions (e.g., Sigmoid, ReLU, Tanh) that introduce non-linearity into the model.
-## Activation Functions
-
-## Activation Functions
-
-Activation functions introduce non-linearity into neural networks and help determine whether a neuron should be activated.  
-They map input signals into specific ranges (e.g., probabilities or bounded values), making deep learning models expressive and powerful.
-
----
 
 ## Activation Functions
 
