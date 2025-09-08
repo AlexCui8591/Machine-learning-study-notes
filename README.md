@@ -213,10 +213,159 @@ D_{KL}(P || Q) = \sum_x P(x) \log \frac{P(x)}{Q(x)}
 
 5. **Design Layers**  
    Construct layers such as input, hidden, and output layers, and define how neurons are connected.
+   🏗 神经网络层编写框架
+## Neural Network Layers
 
-6. **Build Optimizers**  
+This section introduces the core building blocks of a neural network.  
+Each layer includes **parameter definition, initialization, forward propagation, backward propagation, and output shape**.
+
+---
+
+### 1. Fully Connected (Dense) Layer
+
+- **Parameters**
+  - Weights \( W \in (in\_features, out\_features) \)  
+  - Bias \( b \in (out\_features,) \)
+
+- **Initialization**
+  - Xavier or He initialization:  
+    \( W \sim \mathcal{N}(0, \sqrt{\tfrac{2}{in\_features}}) \)
+
+- **Forward**
+  \[
+  Z = XW + b
+  \]
+
+- **Backward**
+  \[
+  dW = X^T dZ, \quad db = \sum dZ, \quad dX = dZ W^T
+  \]
+
+- **Output Shape**
+  - Input: `(batch_size, in_features)`  
+  - Output: `(batch_size, out_features)`
+
+---
+
+### 2. Convolutional (Conv2D) Layer
+
+- **Parameters**
+  - Kernel size: \( (k_h, k_w) \)  
+  - Number of filters: `out_channels`  
+  - Stride, Padding  
+
+- **Initialization**
+  - Weights \( W \in (out\_channels, in\_channels, k_h, k_w) \)  
+  - Bias \( b \in (out\_channels,) \)
+
+- **Forward**
+  \[
+  out = conv2d(X, W, stride, padding) + b
+  \]
+
+- **Backward**
+  - \( dW = X * dZ \)  
+  - \( db = \sum dZ \)  
+  - \( dX = dZ * W^T \)  
+
+- **Output Shape**
+  \[
+  H_{out} = \frac{H_{in} - k_h + 2p}{s} + 1, \quad 
+  W_{out} = \frac{W_{in} - k_w + 2p}{s} + 1
+  \]
+
+---
+
+### 3. MaxPooling Layer
+
+- **Parameters**
+  - Pool size: \( (p_h, p_w) \)  
+  - Stride  
+
+- **Initialization**
+  - No trainable parameters  
+
+- **Forward**
+  - Output the maximum value in each pooling window  
+
+- **Backward**
+  - Gradient flows only to the max element in each window  
+
+- **Output Shape**
+  \[
+  H_{out} = \frac{H_{in} - p_h}{s} + 1, \quad 
+  W_{out} = \frac{W_{in} - p_w}{s} + 1
+  \]
+
+---
+
+### 4. Batch Normalization Layer
+
+- **Parameters**
+  - Learnable scale \( \gamma \), shift \( \beta \)
+
+- **Initialization**
+  - \( \gamma = 1, \ \beta = 0 \)
+
+- **Forward**
+  \[
+  \hat{x} = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}}, \quad 
+  y = \gamma \hat{x} + \beta
+  \]
+
+- **Backward**
+  - Compute gradients for \(\gamma, \beta\) and input  
+
+- **Output Shape**
+  - Same as input
+
+---
+
+### 5. Dropout Layer
+
+- **Parameters**
+  - Dropout rate \( p \)
+
+- **Initialization**
+  - No trainable parameters  
+
+- **Forward**
+  - Randomly drop units:  
+    \( out = X * mask / (1-p) \)
+
+- **Backward**
+  - \( dX = dOut * mask / (1-p) \)
+
+- **Output Shape**
+  - Same as input
+
+---
+
+### 6. Activation Layers
+
+- **ReLU**
+  - Forward: \( f(x) = \max(0, x) \)  
+  - Backward: \( f'(x) = 1_{x > 0} \)
+
+- **Sigmoid**
+  - Forward: \( f(x) = \frac{1}{1+e^{-x}} \)  
+  - Backward: \( f'(x) = f(x)(1-f(x)) \)
+
+- **Tanh**
+  - Forward: \( f(x) = \tanh(x) \)  
+  - Backward: \( f'(x) = 1-\tanh^2(x) \)
+
+- **Softmax**
+  - Forward: \( f(x)_i = \frac{e^{x_i}}{\sum_j e^{x_j}} \)  
+  - Backward: Jacobian matrix (often simplified with cross-entropy)
+
+- **Output Shape**
+  - Same as input
+
+
+7. **Build Optimizers**  
    Implement optimization algorithms (e.g., Gradient Descent, Adam) to update the weights and biases efficiently.
 
-7. **Combine and Train the Network**  
+8. **Combine and Train the Network**  
    Integrate activation functions, loss functions, layers, and optimizers into a complete neural network.  
    Train the model by iteratively forward-propagating inputs, calculating the loss, backpropagating gradients, and updating parameters.
